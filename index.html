@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Puentes · Exprime tus vacaciones con los festivos</title>
+<meta name="description" content="Dime cuántos días de vacaciones tienes y te digo qué días pedir para conseguir el máximo de días libres aprovechando los festivos y puentes de España.">
+<link rel="stylesheet" href="style.css"><style>:root{--accent:#fb923c}</style></head><body><div class="wrap">
+<header><div class="logo">🌉 <b>Puentes</b></div><p>Con pocos días de vacaciones, consigue muchos días libres. Te digo exactamente qué días pedir.</p>
+<span class="tag">Festivos nacionales de España + los tuyos · gratis</span></header>
+<div class="card"><div class="g2"><div><label>Año</label><input id="ano" type="number"></div><div><label>Días de vacaciones que quieres usar en puentes</label><input id="dv" type="number" value="6" min="1"></div></div>
+ <label>Festivos de tu comunidad / municipio (opcional, AAAA-MM-DD separados por coma)</label><input id="ex" placeholder="2026-03-19, 2026-09-08">
+ <button class="btn" id="calc">Encontrar mis puentes</button><div id="res"></div></div>
+<div class="note">Calcula sobre festivos nacionales (cuando caen en domingo, algunas comunidades los trasladan: añádelos tú). Revisa también tu calendario laboral o convenio.</div>
+<footer>Código abierto · <a href="https://github.com/romebkkk/puentes" target="_blank">GitHub</a> · Hecho con ❤️ por <a href="https://dataflowelegance.es" target="_blank">DataFlow Elegance</a></footer></div>
+<script src="puentes.js"></script><script>
+var $=function(s){return document.querySelector(s)};$("#ano").value=new Date().getFullYear()+(new Date().getMonth()>9?1:0);
+function f(s){return new Date(s+"T12:00:00").toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})}
+$("#calc").onclick=function(){var r=Puentes.optimizar({ano:$("#ano").value,diasVacaciones:$("#dv").value,festivosExtra:$("#ex").value.split(",").map(function(s){return s.trim()})});
+ var filas=r.puentes.map(function(p){return'<tr><td><b>'+f(p.desde)+' → '+f(p.hasta)+'</b><br><small style="color:var(--mut)">'+p.festivos.join(", ")+'</small></td><td>'+p.pedir.map(f).join("<br>")+'</td><td><b>'+p.dias_libres+'</b> días</td></tr>'}).join("");
+ $("#res").innerHTML='<div class="card"><small style="color:var(--mut)">Con '+r.vacaciones_usadas+' días de vacaciones consigues</small><div class="big">'+r.dias_libres_total+' días libres</div>'+
+ (r.puentes.length?'<table><tr><th>Puente</th><th>Días a pedir</th><th>Libres</th></tr>'+filas+'</table>':'<p>No hay puentes rentables con esos días.</p>')+
+ (r.vacaciones_sobrantes?'<p style="color:var(--mut)">Te sobran '+r.vacaciones_sobrantes+' días para usarlos cuando quieras.</p>':'')+'</div>'};
+</script></body></html>
